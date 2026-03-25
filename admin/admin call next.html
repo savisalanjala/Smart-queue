@@ -1,0 +1,363 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+<title>Call / Skip Token</title>
+
+<style>
+   .dark {
+    background: #0f172a !important;
+    color: white;
+}
+
+.dark .card {
+    background: #1e293b;
+}
+
+.dark input,
+.dark select {
+    background: #334155;
+    color: white;
+    border: 1px solid #475569;
+}
+
+.dark label {
+    color: #cbd5f5;
+}
+body {
+  font-family: Arial;
+  background: #f4f6f8;
+}
+
+.container {
+  max-width: 600px;
+  margin: 50px auto;
+  padding: 20px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+button {
+  padding: 10px 20px;
+  margin: 10px 5px 10px 0;
+  font-size: 16px;
+  background: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button.skip {
+  background: #dc3545;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+#message {
+  margin-top: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Call / Skip Token</h2>
+
+<button onclick="callNextToken()">Call Next Token</button>
+<button class="skip" onclick="skipToken()">Skip Current Token</button>
+
+<div id="message"></div>
+
+</div>
+
+<script>
+  window.onload = () => {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+        document.body.classList.add("dark");
+    }
+};
+
+// Call next token for admin's place
+async function callNextToken() {
+  const adminUsername = localStorage.getItem("loggedInAdmin");
+  if (!adminUsername) {
+    alert("Admin not logged in!");
+    return;
+  }
+
+  const res = await fetch(
+    `http://localhost:8080/admin/queue?adminUsername=${adminUsername}`
+  );
+
+  const tokens = await res.json();
+  if (tokens.length === 0) {
+    document.getElementById("message").innerText = "No tokens to call";
+    return;
+  }
+
+  const placeId = tokens[0].place.id; // get place ID from first token
+
+  const callRes = await fetch(
+    `http://localhost:8080/admin/queue/next/${placeId}`,
+    { method: "POST" }
+  );
+
+  const text = await callRes.text();
+  document.getElementById("message").innerText = text;
+}
+
+// Skip current token for admin's place
+async function skipToken() {
+  const adminUsername = localStorage.getItem("loggedInAdmin");
+  if (!adminUsername) {
+    alert("Admin not logged in!");
+    return;
+  }
+
+  const queueRes = await fetch(
+    `http://localhost:8080/admin/queue?adminUsername=${adminUsername}`
+  );
+
+  const tokens = await queueRes.json();
+  if (tokens.length === 0) {
+    document.getElementById("message").innerText = "No tokens to skip";
+    return;
+  }
+
+  const tokenId = tokens[0].id; // skip first token
+
+  const res = await fetch(
+    `http://localhost:8080/admin/queue/skip/${tokenId}`,
+    { method: "POST" }
+  );
+
+  const text = await res.text();
+  document.getElementById("message").innerText = text;
+}
+
+</script>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Call / Skip Token</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+/* BASE */
+body {
+  font-family: 'Inter', sans-serif;
+  background: #f8fafc;
+  margin: 0;
+}
+
+/* DARK MODE */
+.dark {
+  background: #0f172a !important;
+  color: #f1f5f9;
+}
+
+.dark .container {
+  background: #1e293b;
+}
+
+.dark h2 {
+  color: #f1f5f9;
+}
+
+.dark #message {
+  color: #e2e8f0;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 600px;
+  margin: 60px auto;
+  padding: 30px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  text-align: center;
+  position: relative;
+}
+
+/* TITLE */
+h2 {
+  margin-bottom: 25px;
+  color: #111827;
+}
+
+/* BUTTONS */
+button {
+  padding: 12px 20px;
+  margin: 10px;
+  font-size: 15px;
+  background: #6366f1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+button.skip {
+  background: #ef4444;
+}
+
+/* DARK BUTTON */
+.dark button {
+  background: #818cf8;
+}
+
+.dark button.skip {
+  background: #ef4444;
+}
+
+/* TOGGLE */
+.toggle {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: #6366f1;
+  border: none;
+  color: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* MESSAGE */
+#message {
+  margin-top: 20px;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<button class="toggle" onclick="toggleTheme()">🌙</button>
+
+<h2>Call / Skip Token</h2>
+
+<button onclick="callNextToken()">Call Next Token</button>
+<button class="skip" onclick="skipToken()">Skip Current Token</button>
+
+<div id="message"></div>
+
+</div>
+
+<script>
+
+/* LOAD THEME */
+window.onload = () => {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+        document.body.classList.add("dark");
+    }
+};
+
+/* TOGGLE DARK MODE */
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
+}
+
+/* CALL NEXT TOKEN */
+async function callNextToken() {
+  const adminUsername = localStorage.getItem("loggedInAdmin");
+
+  if (!adminUsername) {
+    alert("Admin not logged in!");
+    return;
+  }
+
+  try {
+    const res = await fetch(`http://localhost:8080/admin/queue?adminUsername=${adminUsername}`);
+    const tokens = await res.json();
+
+    if (tokens.length === 0) {
+      document.getElementById("message").innerText = "No tokens to call";
+      return;
+    }
+
+    const placeId = tokens[0].place.id;
+
+    const callRes = await fetch(
+      `http://localhost:8080/admin/queue/next/${placeId}`,
+      { method: "POST" }
+    );
+
+    const text = await callRes.text();
+    document.getElementById("message").innerText = text;
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("message").innerText = "Error calling token";
+  }
+}
+
+/* SKIP TOKEN */
+async function skipToken() {
+  const adminUsername = localStorage.getItem("loggedInAdmin");
+
+  if (!adminUsername) {
+    alert("Admin not logged in!");
+    return;
+  }
+
+  try {
+    const queueRes = await fetch(`http://localhost:8080/admin/queue?adminUsername=${adminUsername}`);
+    const tokens = await queueRes.json();
+
+    if (tokens.length === 0) {
+      document.getElementById("message").innerText = "No tokens to skip";
+      return;
+    }
+
+    const tokenId = tokens[0].id;
+
+    const res = await fetch(
+      `http://localhost:8080/admin/queue/skip/${tokenId}`,
+      { method: "POST" }
+    );
+
+    const text = await res.text();
+    document.getElementById("message").innerText = text;
+
+  } catch (err) {
+    console.error(err);
+    document.getElementById("message").innerText = "Error skipping token";
+  }
+}
+
+</script>
+
+</body>
+</html>
