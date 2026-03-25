@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: #fff;
+            padding: 40px 30px;
+            width: 360px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #222;
+        }
+
+        input {
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        button {
+            width: 80%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #8134a3;
+        }
+
+        .msg {
+            margin-top: 15px;
+            font-size: 14px;
+            color: green;
+        }
+
+        .switch {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .switch a {
+            color: #141e30;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+         .dark {
+    background: #0f172a !important;
+    color: white;
+}
+
+.dark .card {
+    background: #1e293b;
+}
+
+.dark input,
+.dark select {
+    background: #334155;
+    color: white;
+    border: 1px solid #475569;
+}
+
+.dark label {
+    color: #cbd5f5;
+}
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Admin Login</h2>
+
+    <input type="text" id="username" placeholder="Admin Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+
+    <button onclick="loginAdmin()">Login</button>
+
+    <div class="msg" id="message"></div>
+
+    <div class="switch">
+        New admin? <a href="admreg.html">Register here</a>
+    </div>
+</div>
+
+<script>
+    window.onload = () => {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+        document.body.classList.add("dark");
+    }
+};
+function loginAdmin() {
+    const username = document.getElementById("username").value;
+    const password = document.getElementById("password").value;
+
+    fetch(`http://localhost:8080/admin/login?username=${username}&password=${password}`, {
+        method: "POST"
+    })
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById("message").innerText = data;
+
+        if (data === "Login successful") {
+            localStorage.setItem("loggedInAdmin", username);
+            window.location.href = "admdashboard.html";
+        }
+    });
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
