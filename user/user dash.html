@@ -1,0 +1,277 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+
+    <style>
+        body {
+            margin: 0;
+            font-family: "Segoe UI", sans-serif;
+            background: #f4f6f9;
+        }
+
+        .header {
+            background: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+            font-size: 22px;
+            font-weight: 600;
+        }
+
+        .dashboard {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            padding: 60px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            width: 260px;
+            height: 180px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+        }
+
+        .card h3 {
+            margin-top: 15px;
+            color: #2c3e50;
+        }
+
+        .icon {
+            font-size: 45px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: gray;
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    User Dashboard
+</div>
+
+<div class="dashboard">
+
+    <div class="card" onclick="goToPlaces()">
+        <div class="icon">🏢</div>
+        <h3>View Places</h3>
+    </div>
+
+    <div class="card" onclick="goToGenerateToken()">
+        <div class="icon">🎟️</div>
+        <h3>Generate Token</h3>
+    </div>
+
+    <div class="card" onclick="goToTokenDetails()">
+        <div class="icon">📄</div>
+        <h3>Token Details</h3>
+    </div>
+
+</div>
+
+<div class="footer">
+    Smart Queue Management System
+</div>
+
+<script>
+    function goToPlaces() {
+        window.location.href = "places.html";
+    }
+
+    function goToGenerateToken() {
+        window.location.href = "generate-token.html";
+    }
+
+    function goToTokenDetails() {
+        window.location.href = "token-details.html";
+    }
+</script>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Dashboard</title>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #111827;
+            --subtext: #6b7280;
+            --primary: #6366f1;
+        }
+
+        .dark {
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #f1f5f9;
+            --subtext: #94a3b8;
+            --primary: #818cf8;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+        }
+
+        /* HEADER */
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        /* TOGGLE */
+        .toggle {
+            background: white;
+            border: none;
+            color: black;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* DASHBOARD */
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+            padding: 40px;
+        }
+
+        /* CARD */
+        .card {
+            background: var(--card);
+            height: 170px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.25s;
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+        }
+
+        .icon {
+            font-size: 40px;
+        }
+
+        .card h3 {
+            margin-top: 12px;
+            color: var(--text);
+        }
+
+        /* FOOTER */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--subtext);
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <span>User Dashboard</span>
+    <button class="toggle" onclick="toggleTheme()">🌙</button>
+</div>
+
+<div class="dashboard">
+
+    <div class="card" onclick="goToPlaces()">
+        <div class="icon">🏢</div>
+        <h3>View Places</h3>
+    </div>
+
+    <div class="card" onclick="goToGenerateToken()">
+        <div class="icon">🎟️</div>
+        <h3>Generate Token</h3>
+    </div>
+
+    <div class="card" onclick="goToTokenDetails()">
+        <div class="icon">📄</div>
+        <h3>Token Details</h3>
+    </div>
+
+</div>
+
+<div class="footer">
+    Smart Queue Management System
+</div>
+
+<script>
+
+/* LOAD THEME */
+window.onload = () => {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+        document.body.classList.add("dark");
+    }
+};
+
+/* TOGGLE DARK MODE */
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
+}
+
+/* NAVIGATION */
+function goToPlaces() {
+    window.location.href = "places.html";
+}
+
+function goToGenerateToken() {
+    window.location.href = "generate-token.html";
+}
+
+function goToTokenDetails() {
+    window.location.href = "token-details.html";
+}
+
+</script>
+
+</body>
+</html>
