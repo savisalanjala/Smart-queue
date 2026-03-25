@@ -1,0 +1,412 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Place</title>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #f4f6f9;
+            padding: 40px;
+        }
+
+        .card {
+            background: white;
+            max-width: 500px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+            color: #1f2937;
+        }
+
+        label {
+            font-size: 14px;
+            color: #374151;
+            display: block;
+            margin-top: 12px;
+        }
+
+        input, select {
+            width: 100%;
+            height: 42px;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+        }
+
+        .days {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .days label {
+            font-size: 13px;
+        }
+
+        button {
+            width: 100%;
+            height: 45px;
+            margin-top: 20px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1e40af;
+        }
+
+        .msg {
+            margin-top: 15px;
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Add New Place</h2>
+
+    <label>Place Name</label>
+    <input type="text" id="name">
+
+    <label>Location</label>
+    <input type="text" id="location">
+
+    <label>Contact Number</label>
+    <input type="text" id="contact">
+
+    <label>Opening Time</label>
+    <input type="time" id="openTime">
+
+    <label>Closing Time</label>
+    <input type="time" id="closeTime">
+
+    <label>Leave Days</label>
+    <div class="days">
+        <label><input type="checkbox" value="MONDAY"> Monday</label>
+        <label><input type="checkbox" value="TUESDAY"> Tuesday</label>
+        <label><input type="checkbox" value="WEDNESDAY"> Wednesday</label>
+        <label><input type="checkbox" value="THURSDAY"> Thursday</label>
+        <label><input type="checkbox" value="FRIDAY"> Friday</label>
+        <label><input type="checkbox" value="SATURDAY"> Saturday</label>
+        <label><input type="checkbox" value="SUNDAY"> Sunday</label>
+    </div>
+
+    <button onclick="addPlace()">Add Place</button>
+
+    <div class="msg" id="msg"></div>
+</div>
+
+<script>
+function addPlace() {
+
+    const username = localStorage.getItem("loggedInAdmin");
+
+    if (!username) {
+        alert("Please login first");
+        window.location.href = "adminlogin.html";
+        return;
+    }
+
+    const selectedDays = [];
+    document.querySelectorAll(".days input:checked")
+        .forEach(cb => selectedDays.push(cb.value));
+
+    const place = {
+        name: document.getElementById("name").value,
+        location: document.getElementById("location").value,
+        contactNumber: document.getElementById("contact").value,
+        openingTime: document.getElementById("openTime").value,
+        closingTime: document.getElementById("closeTime").value,
+        leaveDays: selectedDays
+    };
+
+    fetch(`http://localhost:8080/admin/place?username=${username}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(place)
+    })
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById("msg").innerText = data;
+    })
+    .catch(err => console.error(err));
+}
+</script>
+
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Place</title>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            margin: 0;
+        }
+
+        /* Center Layout */
+        .container {
+            display: flex;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        /* Card */
+        .card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 520px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Form Group */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        /* Inputs */
+        input {
+            width: 100%;
+            height: 42px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            background: #f9fafb;
+        }
+
+        input:focus {
+            border-color: #6366f1;
+            background: #ffffff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+        }
+
+        /* Grid for time */
+        .time-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Days section */
+        .days {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-top: 10px;
+}
+
+        .day-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--input-bg);
+    padding: 10px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.2s;
+    border: 1px solid var(--border);
+    color: var(--text);
+}
+
+/* Hover */
+.day-item:hover {
+    border-color: var(--primary);
+}
+
+/* When checked */
+.day-item input:checked + span {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+        /* Button */
+        button {
+            width: 100%;
+            height: 44px;
+            margin-top: 20px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            background: #4f46e5;
+        }
+
+        /* Message */
+        .msg {
+            margin-top: 15px;
+            font-size: 14px;
+            text-align: center;
+            color: green;
+        }
+
+        .dark {
+    background: #0f172a !important;
+    color: white;
+}
+
+.dark .card {
+    background: #1e293b;
+}
+
+.dark input,
+.dark select {
+    background: #334155;
+    color: white;
+    border: 1px solid #475569;
+}
+
+.dark label {
+    color: #cbd5f5;
+}
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="card">
+       
+        <h2>Add New Place</h2>
+
+        <div class="form-group">
+            <label>Place Name</label>
+            <input type="text" id="name">
+        </div>
+
+        <div class="form-group">
+            <label>Location</label>
+            <input type="text" id="location">
+        </div>
+
+        <div class="form-group">
+            <label>Contact Number</label>
+            <input type="text" id="contact">
+        </div>
+
+        <div class="form-group time-group">
+            <div style="flex:1;">
+                <label>Opening Time</label>
+                <input type="time" id="openTime">
+            </div>
+            <div style="flex:1;">
+                <label>Closing Time</label>
+                <input type="time" id="closeTime">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Leave Days</label>
+            <div class="days">
+                <label class="day-item"><input type="checkbox" value="MONDAY"> Mon</label>
+                <label class="day-item"><input type="checkbox" value="TUESDAY"> Tue</label>
+                <label class="day-item"><input type="checkbox" value="WEDNESDAY"> Wed</label>
+                <label class="day-item"><input type="checkbox" value="THURSDAY"> Thu</label>
+                <label class="day-item"><input type="checkbox" value="FRIDAY"> Fri</label>
+                <label class="day-item"><input type="checkbox" value="SATURDAY"> Sat</label>
+                <label class="day-item"><input type="checkbox" value="SUNDAY"> Sun</label>
+            </div>
+        </div>
+
+        <button onclick="addPlace()">Add Place</button>
+
+        <div class="msg" id="msg"></div>
+    </div>
+</div>
+
+<script>
+    window.onload = () => {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+        document.body.classList.add("dark");
+    }
+};
+function addPlace() {
+
+    const username = localStorage.getItem("loggedInAdmin");
+
+    if (!username) {
+        alert("Please login first");
+        window.location.href = "adminlogin.html";
+        return;
+    }
+
+    const selectedDays = [];
+    document.querySelectorAll(".days input:checked")
+        .forEach(cb => selectedDays.push(cb.value));
+
+    const place = {
+        name: document.getElementById("name").value,
+        location: document.getElementById("location").value,
+        contactNumber: document.getElementById("contact").value,
+        openingTime: document.getElementById("openTime").value,
+        closingTime: document.getElementById("closeTime").value,
+        leaveDays: selectedDays
+    };
+
+    fetch(`http://localhost:8080/admin/place?username=${username}`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(place)
+    })
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById("msg").innerText = data;
+    })
+    .catch(err => console.error(err));
+}
+</script>
+
+</body>
+</html>
