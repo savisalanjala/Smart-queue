@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Login</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #ffffff;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            width: 350px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 25px;
+            color: #333;
+        }
+        input {
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+        input:focus {
+            border-color: #9b59b6;
+            box-shadow: 0 0 5px rgba(155, 89, 182, 0.5);
+        }
+        button {
+            width: 80%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #8134a3;
+        }
+        .message {
+            margin-top: 15px;
+            font-size: 14px;
+            color: green;
+        }
+        .switch {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        .switch a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="login()">Login</button>
+    <div class="message" id="message"></div>
+    <div class="switch">
+        Don't have an account? <a href="reguser.html">Register here</a>
+    </div>
+</div>
+
+<script>
+function login() {
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value;
+
+    if (!username || !password) {
+        document.getElementById("message").innerText = "Enter username & password";
+        return;
+    }
+
+    const loginData = { username, password };
+
+    fetch("http://localhost:8080/user/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(loginData)
+    })
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById("message").innerText = data;
+
+        if (data === "Login successful") {
+            localStorage.setItem("username", username); // store username
+            window.location.href = "userdashboard.html";
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        document.getElementById("message").innerText = "Server error";
+    });
+}
+</script>
+
+</body>
+</html>
