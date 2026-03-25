@@ -1,0 +1,426 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Tokens</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: "Segoe UI", sans-serif;
+        background: #f4f6f9;
+    }
+
+    .header {
+        background: #007bff;
+        color: white;
+        padding: 18px;
+        text-align: center;
+        font-size: 22px;
+        font-weight: 600;
+    }
+
+    .container {
+        max-width: 900px;
+        margin: 30px auto;
+        padding: 20px;
+        text-align: center;
+    }
+
+    input {
+        width: 280px;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 15px;
+        margin-right: 10px;
+    }
+
+    button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 8px;
+        background: #007bff;
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #0056b3;
+    }
+
+    .cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+    }
+
+    .card {
+        background: white;
+        padding: 18px;
+        border-radius: 14px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+        text-align: left;
+        transition: transform 0.2s;
+    }
+
+    .card:hover {
+        transform: translateY(-5px);
+    }
+
+    .card h4 {
+        margin: 0 0 10px 0;
+        color: #007bff;
+    }
+
+    .detail {
+        font-size: 14px;
+        margin: 6px 0;
+        color: #444;
+    }
+
+    .status {
+        margin-top: 10px;
+        display: inline-block;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+    }
+
+    .GENERATED {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+
+    .SERVED {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .CANCELLED {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .error {
+        margin-top: 20px;
+        color: red;
+        font-weight: 500;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="header">My Tokens</div>
+
+<div class="container">
+    
+
+    <div id="error" class="error"></div>
+    <div class="cards" id="tokenCards"></div>
+</div>
+
+<script>
+const apiBase = "http://localhost:8080/user";
+
+window.onload = function () {
+    loadTokens();
+};
+
+
+function loadTokens() {
+
+    const username = localStorage.getItem("username");
+
+    const cards = document.getElementById("tokenCards");
+    const error = document.getElementById("error");
+
+    cards.innerHTML = "";
+    error.innerText = "";
+
+    if (!username) {
+        error.innerText = "User not logged in";
+        return;
+    }
+
+    fetch(`${apiBase}/tokens?username=${encodeURIComponent(username)}`)
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.length === 0) {
+                error.innerText = "No tokens found";
+                return;
+            }
+
+            data.forEach(token => {
+
+                const card = document.createElement("div");
+                card.className = "card";
+
+                card.innerHTML = `
+                    <h4>🎟 Token #${token.tokenNumber}</h4>
+                    <div class="detail">🆔 Token ID: ${token.tokenId}</div>
+                    <div class="detail">🏥 Place: ${token.placeName}</div>
+                    <div class="detail">🛎 Service: ${token.serviceName}</div>
+                    <div class="detail">📅 Visit Date: ${token.visitDate}</div>
+                    <span class="status ${token.status}">
+                        ${token.status}
+                    </span>
+                `;
+
+                cards.appendChild(card);
+            });
+
+        })
+        .catch(() => {
+            error.innerText = "Failed to load tokens";
+        });
+}
+
+</script>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Tokens</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+:root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #111827;
+    --subtext: #6b7280;
+    --primary: #6366f1;
+}
+
+.dark {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f1f5f9;
+    --subtext: #94a3b8;
+    --primary: #818cf8;
+}
+
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+}
+
+/* HEADER */
+.header {
+    background: var(--primary);
+    color: white;
+    padding: 18px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* TOGGLE */
+.toggle {
+    background: white;
+    border: none;
+    color: black;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+/* CONTAINER */
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+/* GRID */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+/* CARD */
+.card {
+    background: var(--card);
+    padding: 18px;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+    transition: 0.25s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* TITLE */
+.card h4 {
+    margin: 0 0 10px 0;
+    color: var(--primary);
+}
+
+/* DETAILS */
+.detail {
+    font-size: 14px;
+    margin: 6px 0;
+    color: var(--subtext);
+}
+
+/* STATUS */
+.status {
+    margin-top: 10px;
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* STATUS COLORS */
+.GENERATED {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.SERVED {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.CANCELLED {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* DARK STATUS FIX */
+.dark .GENERATED {
+    background: #1e3a5f;
+    color: #7dd3fc;
+}
+
+.dark .SERVED {
+    background: #14532d;
+    color: #86efac;
+}
+
+.dark .CANCELLED {
+    background: #7f1d1d;
+    color: #fecaca;
+}
+
+/* ERROR */
+.error {
+    margin-top: 20px;
+    color: red;
+    font-weight: 500;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <span>My Tokens</span>
+    <button class="toggle" onclick="toggleTheme()">🌙</button>
+</div>
+
+<div class="container">
+    <div id="error" class="error"></div>
+    <div class="cards" id="tokenCards"></div>
+</div>
+
+<script>
+
+const apiBase = "http://localhost:8080/user";
+
+/* LOAD THEME */
+window.onload = function () {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+        document.body.classList.add("dark");
+    }
+
+    loadTokens();
+};
+
+/* TOGGLE THEME */
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
+}
+
+/* LOAD TOKENS */
+function loadTokens() {
+
+    const username = localStorage.getItem("username");
+
+    const cards = document.getElementById("tokenCards");
+    const error = document.getElementById("error");
+
+    cards.innerHTML = "";
+    error.innerText = "";
+
+    if (!username) {
+        error.innerText = "User not logged in";
+        return;
+    }
+
+    fetch(`${apiBase}/tokens?username=${encodeURIComponent(username)}`)
+        .then(res => res.json())
+        .then(data => {
+
+            if (data.length === 0) {
+                error.innerText = "No tokens found";
+                return;
+            }
+
+            data.forEach(token => {
+
+                const card = document.createElement("div");
+                card.className = "card";
+
+                card.innerHTML = `
+                    <h4>🎟 Token #${token.tokenNumber}</h4>
+                    <div class="detail">🆔 ID: ${token.tokenId}</div>
+                    <div class="detail">🏥 ${token.placeName}</div>
+                    <div class="detail">🛎 ${token.serviceName}</div>
+                    <div class="detail">📅 ${token.visitDate}</div>
+                    <span class="status ${token.status}">
+                        ${token.status}
+                    </span>
+                `;
+
+                cards.appendChild(card);
+            });
+
+        })
+        .catch(() => {
+            error.innerText = "Failed to load tokens";
+        });
+}
+
+</script>
+
+</body>
+</html>
