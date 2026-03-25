@@ -1,0 +1,513 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>User Dashboard - Smart Queue</title>
+
+<style>
+
+     .dark {
+    background: #0f172a !important;
+    color: white;
+}
+
+.dark .card {
+    background: #1e293b;
+}
+
+.dark input,
+.dark select {
+    background: #334155;
+    color: white;
+    border: 1px solid #475569;
+}
+
+.dark label {
+    color: #cbd5f5;
+}
+body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(120deg, #f0f4f8, #d9e2ec);
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+.container {
+    width: 420px;
+    background: white;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    text-align: center;
+}
+
+input, select, button {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 15px;
+}
+
+button {
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #0056b3;
+}
+
+/* popup */
+.overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    width: 300px;
+    text-align: center;
+}
+.logout-btn {
+    margin-top: 10px;
+    background: #ff4d4d;
+}
+.logout-btn:hover {
+    background: #cc0000;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+    <h2>Smart Queue</h2>
+
+    <div><strong>Logged in as:</strong> <span id="displayUsername"></span></div>
+
+    <select id="placeSelect">
+        <option value="">Select Place</option>
+    </select>
+
+    <select id="serviceSelect">
+        <option value="">Select Service</option>
+    </select>
+
+    <input type="date" id="visitDate">
+
+    <button onclick="generateToken()">Generate Token</button>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<div class="overlay" id="overlay"></div>
+<div class="popup" id="popup">
+    <h3>Token Result</h3>
+    <p id="popupText"></p>
+    <button onclick="closePopup()">Close</button>
+</div>
+
+<script>
+    window.onload = () => {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+        document.body.classList.add("dark");
+    }
+};
+const apiBase = "http://localhost:8080/user";
+
+// ✅ Get username from localStorage
+const username = localStorage.getItem("username");
+if (!username) {
+    alert("Please login first!");
+    window.location.href = "login.html";
+} else {
+    document.getElementById("displayUsername").innerText = username;
+}
+
+/* ---------------- LOAD PLACES ---------------- */
+
+fetch(`${apiBase}/places`)
+.then(r => r.json())
+.then(places => {
+    const sel = document.getElementById("placeSelect");
+    places.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.id;
+        opt.textContent = p.name + " (" + p.location + ")";
+        sel.appendChild(opt);
+    });
+});
+
+/* ---------------- LOAD SERVICES WHEN PLACE CHANGES ---------------- */
+
+document.getElementById("placeSelect").addEventListener("change", function () {
+    const placeName = this.options[this.selectedIndex].text.split(" (")[0];
+    const serviceSelect = document.getElementById("serviceSelect");
+    serviceSelect.innerHTML = '<option value="">Select Service</option>';
+    if (!placeName) return;
+
+    fetch(`${apiBase}/services?placeName=${encodeURIComponent(placeName)}`)
+    .then(r => r.json())
+    .then(services => {
+        services.forEach(s => {
+            const opt = document.createElement("option");
+            opt.value = s.id;
+            opt.textContent = `${s.serviceName} - ${s.estimatedTimeMinutes} mins - ₹${s.price}`;
+            serviceSelect.appendChild(opt);
+        });
+    });
+});
+
+/* ---------------- GENERATE TOKEN ---------------- */
+
+function generateToken() {
+    const placeId = document.getElementById("placeSelect").value;
+    const serviceId = document.getElementById("serviceSelect").value;
+    const visitDate = document.getElementById("visitDate").value;
+
+    if (!placeId || !serviceId) {
+        alert("Fill all required fields");
+        return;
+    }
+
+    let url = `${apiBase}/token?username=${encodeURIComponent(username)}`
+            + `&placeId=${placeId}`
+            + `&serviceId=${serviceId}`;
+    if (visitDate) {
+        url += `&visitDate=${visitDate}`;
+    }
+
+    fetch(url, { method: "POST" })
+    .then(r => r.text())
+    .then(msg => showPopup(msg))
+    .catch(() => showPopup("Token generation failed"));
+}
+
+/* ---------------- POPUP ---------------- */
+
+function showPopup(msg) {
+    document.getElementById("popupText").innerText = msg;
+    document.getElementById("popup").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+}
+
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+}
+
+/* ---------------- LOGOUT ---------------- */
+function logout() {
+    localStorage.removeItem("username");
+    window.location.href = "login.html";
+}
+</script>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>User Dashboard - Smart Queue</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+
+:root {
+    --bg: #f8fafc;
+    --card: #ffffff;
+    --text: #111827;
+    --subtext: #6b7280;
+    --primary: #6366f1;
+}
+
+.dark {
+    --bg: #0f172a;
+    --card: #1e293b;
+    --text: #f1f5f9;
+    --subtext: #94a3b8;
+    --primary: #818cf8;
+}
+
+/* BODY */
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    display: flex;
+    justify-content: center;
+    margin-top: 60px;
+}
+
+/* CARD */
+.container {
+    width: 420px;
+    background: var(--card);
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    text-align: center;
+}
+
+/* TITLE */
+h2 {
+    color: var(--text);
+}
+
+/* USER TEXT */
+#displayUsername {
+    color: var(--primary);
+    font-weight: 500;
+}
+
+/* INPUTS */
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    font-size: 14px;
+    background: #f9fafb;
+    color: var(--text);
+}
+
+input:focus, select:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+}
+
+/* DARK INPUT FIX */
+.dark input,
+.dark select {
+    background: #1e293b;
+    color: #f1f5f9;
+    border: 1px solid #475569;
+}
+
+.dark input::placeholder {
+    color: #94a3b8;
+}
+
+/* BUTTONS */
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 8px;
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+/* PRIMARY BUTTON */
+button:first-of-type {
+    background: var(--primary);
+    color: white;
+}
+
+button:first-of-type:hover {
+    opacity: 0.9;
+}
+
+/* LOGOUT BUTTON */
+.logout-btn {
+    background: #ef4444;
+    color: white;
+}
+
+.logout-btn:hover {
+    opacity: 0.9;
+}
+
+/* POPUP */
+.overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+}
+
+.popup {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--card);
+    padding: 25px;
+    border-radius: 12px;
+    width: 300px;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.popup h3 {
+    color: var(--text);
+}
+
+.popup p {
+    color: var(--subtext);
+}
+
+/* DARK POPUP */
+.dark .popup {
+    background: #1e293b;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h2>Smart Queue</h2>
+
+    <div><strong>Logged in as:</strong> <span id="displayUsername"></span></div>
+
+    <select id="placeSelect">
+        <option value="">Select Place</option>
+    </select>
+
+    <select id="serviceSelect">
+        <option value="">Select Service</option>
+    </select>
+
+    <input type="date" id="visitDate">
+
+    <button onclick="generateToken()">Generate Token</button>
+    
+
+</div>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="popup" id="popup">
+    <h3>Token Result</h3>
+    <p id="popupText"></p>
+    <button onclick="closePopup()">Close</button>
+</div>
+
+<script>
+
+/* LOAD THEME */
+window.onload = () => {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+        document.body.classList.add("dark");
+    }
+
+    loadPlaces();
+};
+
+/* USER CHECK */
+const apiBase = "http://localhost:8080/user";
+const username = localStorage.getItem("username");
+
+if (!username) {
+    alert("Please login first!");
+    window.location.href = "login.html";
+} else {
+    document.getElementById("displayUsername").innerText = username;
+}
+
+/* LOAD PLACES */
+function loadPlaces() {
+    fetch(`${apiBase}/places`)
+    .then(r => r.json())
+    .then(places => {
+        const sel = document.getElementById("placeSelect");
+        places.forEach(p => {
+            const opt = document.createElement("option");
+            opt.value = p.id;
+            opt.textContent = p.name + " (" + p.location + ")";
+            sel.appendChild(opt);
+        });
+    });
+}
+
+/* LOAD SERVICES */
+document.getElementById("placeSelect").addEventListener("change", function () {
+    const placeName = this.options[this.selectedIndex].text.split(" (")[0];
+    const serviceSelect = document.getElementById("serviceSelect");
+    serviceSelect.innerHTML = '<option value="">Select Service</option>';
+
+    if (!placeName) return;
+
+    fetch(`${apiBase}/services?placeName=${encodeURIComponent(placeName)}`)
+    .then(r => r.json())
+    .then(services => {
+        services.forEach(s => {
+            const opt = document.createElement("option");
+            opt.value = s.id;
+            opt.textContent = `${s.serviceName} - ${s.estimatedTimeMinutes} mins - ₹${s.price}`;
+            serviceSelect.appendChild(opt);
+        });
+    });
+});
+
+/* GENERATE TOKEN */
+function generateToken() {
+    const placeId = document.getElementById("placeSelect").value;
+    const serviceId = document.getElementById("serviceSelect").value;
+    const visitDate = document.getElementById("visitDate").value;
+
+    if (!placeId || !serviceId) {
+        alert("Fill all required fields");
+        return;
+    }
+
+    let url = `${apiBase}/token?username=${encodeURIComponent(username)}`
+            + `&placeId=${placeId}`
+            + `&serviceId=${serviceId}`;
+
+    if (visitDate) {
+        url += `&visitDate=${visitDate}`;
+    }
+
+    fetch(url, { method: "POST" })
+    .then(r => r.text())
+    .then(msg => showPopup(msg))
+    .catch(() => showPopup("Token generation failed"));
+}
+
+/* POPUP */
+function showPopup(msg) {
+    document.getElementById("popupText").innerText = msg;
+    document.getElementById("popup").style.display = "block";
+    document.getElementById("overlay").style.display = "block";
+}
+
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
+    document.getElementById("overlay").style.display = "none";
+}
+
+/* LOGOUT */
+function logout() {
+    localStorage.removeItem("username");
+    window.location.href = "login.html";
+}
+
+</script>
+
+</body>
+</html>
