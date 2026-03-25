@@ -1,1 +1,416 @@
 
+<!-- <!-- <!DOCTYPE html>
+<html>
+<head>
+    <title>Add Service to Your Place</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f6f9;
+            padding: 40px;
+        }
+
+        .card {
+            background: white;
+            max-width: 520px;
+            margin: auto;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+
+        input, select {
+            width: 100%;
+            height: 42px;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-top: 10px;
+        }
+
+        button {
+            width: 100%;
+            height: 44px;
+            margin-top: 15px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        .msg {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Add Service to Your Place</h2>
+
+    <label for="placeSelect">Select Place:</label>
+    <select id="placeSelect"></select>
+
+    <input type="text" id="serviceName" placeholder="Service Name">
+    <input type="number" id="price" placeholder="Price">
+
+    <button onclick="addService()">Add Service</button>
+
+    <div id="msg" class="msg"></div>
+</div>
+
+<script>
+async function loadPlaces() {
+    const msgEl = document.getElementById("msg");
+    const adminUsername = localStorage.getItem("loggedInAdmin");
+
+    if (!adminUsername) {
+        msgEl.innerText = "Admin not logged in!";
+        return;
+    }
+
+    try {
+        const res = await fetch(`http://localhost:8080/admin/places?username=${adminUsername}`);
+        const places = await res.json();
+
+        const placeSelect = document.getElementById("placeSelect");
+        placeSelect.innerHTML = "";
+
+        if (!places || places.length === 0) {
+            msgEl.innerText = "No places found for this admin";
+            return;
+        }
+
+        places.forEach(place => {
+            const option = document.createElement("option");
+            option.value = place.id; // can keep for info
+            option.text = place.name + " (" + place.location + ")";
+            placeSelect.add(option);
+        });
+
+    } catch (err) {
+        console.error(err);
+        msgEl.innerText = "Error fetching places";
+    }
+}
+
+async function addService() {
+    const msgEl = document.getElementById("msg");
+    const adminUsername = localStorage.getItem("loggedInAdmin");
+
+    const service = {
+        serviceName: document.getElementById("serviceName").value,
+        price: parseFloat(document.getElementById("price").value)
+    };
+
+    if (!service.serviceName || isNaN(service.price)) {
+        msgEl.innerText = "Enter valid service name and price";
+        return;
+    }
+
+    try {
+        const res = await fetch(`http://localhost:8080/admin/place/service?adminUsername=${adminUsername}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(service)
+        });
+
+        const result = await res.text();
+        msgEl.innerText = result;
+
+        document.getElementById("serviceName").value = "";
+        document.getElementById("price").value = "";
+
+    } catch (err) {
+        console.error(err);
+        msgEl.innerText = "Error adding service";
+    }
+}
+
+window.onload = loadPlaces;
+</script>
+
+</body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Service to Your Place</title>
+
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            margin: 0;
+        }
+
+        /* DARK MODE */
+        .dark {
+            background: #0f172a !important;
+            color: white;
+        }
+
+        .dark .card {
+            background: #1e293b;
+        }
+
+        /* FIXED INPUT VISIBILITY */
+        .dark input,
+        .dark select {
+            background: #1e293b;
+            color: #f1f5f9;
+            border: 1px solid #475569;
+        }
+
+        /* FIX FOCUS BUG */
+        .dark input:focus,
+        .dark select:focus {
+            background: #1e293b;
+            color: #ffffff;
+            border-color: #818cf8;
+            box-shadow: 0 0 0 3px rgba(129,140,248,0.25);
+        }
+
+        /* PLACEHOLDER FIX */
+        .dark input::placeholder {
+            color: #94a3b8;
+        }
+
+        .dark label {
+            color: #cbd5f5;
+        }
+
+        .dark h2 {
+            color: #f1f5f9;
+        }
+
+        /* Layout */
+        .container {
+            display: flex;
+            justify-content: center;
+            padding: 60px 20px;
+        }
+
+        /* Card */
+        .card {
+            position: relative;
+            background: #ffffff;
+            width: 100%;
+            max-width: 520px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.06);
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* Toggle Button */
+        .toggle {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: #6366f1;
+            border: none;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 6px;
+        }
+
+        input, select {
+            width: 100%;
+            height: 42px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            font-size: 14px;
+            background: #f9fafb;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: #6366f1;
+            background: #ffffff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(99,102,241,0.15);
+        }
+
+        /* Button */
+        button.main-btn {
+            width: 100%;
+            height: 44px;
+            margin-top: 20px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button.main-btn:hover {
+            background: #4f46e5;
+        }
+
+        /* Message */
+        .msg {
+            margin-top: 15px;
+            font-size: 14px;
+            text-align: center;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <div class="card">
+
+        <button class="toggle" onclick="toggleTheme()">🌙</button>
+
+        <h2>Add Service to Your Place</h2>
+
+        <div class="form-group">
+            <label>Select Place</label>
+            <select id="placeSelect"></select>
+        </div>
+
+        <div class="form-group">
+            <label>Service Name</label>
+            <input type="text" id="serviceName" placeholder="Enter service name">
+        </div>
+
+        <div class="form-group">
+            <label>Price</label>
+            <input type="number" id="price" placeholder="Enter price">
+        </div>
+
+        <button class="main-btn" onclick="addService()">Add Service</button>
+
+        <div id="msg" class="msg"></div>
+    </div>
+</div>
+
+<script>
+
+/* ON LOAD */
+window.onload = () => {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+        document.body.classList.add("dark");
+    }
+
+    loadPlaces();
+};
+
+/* TOGGLE DARK MODE */
+function toggleTheme() {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+        localStorage.setItem("theme", "dark");
+    } else {
+        localStorage.setItem("theme", "light");
+    }
+}
+
+/* LOAD PLACES */
+async function loadPlaces() {
+    const msgEl = document.getElementById("msg");
+    const adminUsername = localStorage.getItem("loggedInAdmin");
+
+    if (!adminUsername) {
+        msgEl.innerText = "Admin not logged in!";
+        return;
+    }
+
+    try {
+        const res = await fetch(`http://localhost:8080/admin/places?username=${adminUsername}`);
+        const places = await res.json();
+
+        const placeSelect = document.getElementById("placeSelect");
+        placeSelect.innerHTML = "";
+
+        if (!places || places.length === 0) {
+            msgEl.innerText = "No places found";
+            return;
+        }
+
+        places.forEach(place => {
+            const option = document.createElement("option");
+            option.value = place.id;
+            option.text = place.name + " (" + place.location + ")";
+            placeSelect.add(option);
+        });
+
+    } catch (err) {
+        console.error(err);
+        msgEl.innerText = "Error fetching places";
+    }
+}
+
+/* ADD SERVICE */
+async function addService() {
+    const msgEl = document.getElementById("msg");
+    const adminUsername = localStorage.getItem("loggedInAdmin");
+
+    const service = {
+        serviceName: document.getElementById("serviceName").value,
+        price: parseFloat(document.getElementById("price").value)
+    };
+
+    if (!service.serviceName || isNaN(service.price)) {
+        msgEl.innerText = "Enter valid service name and price";
+        return;
+    }
+
+    try {
+        const res = await fetch(`http://localhost:8080/admin/place/service?adminUsername=${adminUsername}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(service)
+        });
+
+        const result = await res.text();
+        msgEl.innerText = result;
+
+        document.getElementById("serviceName").value = "";
+        document.getElementById("price").value = "";
+
+    } catch (err) {
+        console.error(err);
+        msgEl.innerText = "Error adding service";
+    }
+}
+
+</script>
+
+</body>
+</html>
