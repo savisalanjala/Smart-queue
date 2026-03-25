@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Register</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: linear-gradient(135deg, #71b7e6, #9b59b6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .card {
+            background: #fff;
+            padding: 40px 30px;
+            width: 360px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 25px;
+            color: #222;
+        }
+
+        input {
+            width: 80%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            outline: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #9b59b6;
+            box-shadow: 0 0 5px rgba(155, 89, 182, 0.5);
+        }
+
+        button {
+            width: 80%;
+            padding: 12px;
+            margin-top: 15px;
+            background: #9b59b6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #8134a3;
+        }
+
+        .msg {
+            margin-top: 15px;
+            color: green;
+            font-size: 14px;
+        }
+
+        .switch {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .switch a {
+            color: #232526;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+         .dark {
+    background: #0f172a !important;
+    color: white;
+}
+
+.dark .card {
+    background: #1e293b;
+}
+
+.dark input,
+.dark select {
+    background: #334155;
+    color: white;
+    border: 1px solid #475569;
+}
+
+.dark label {
+    color: #cbd5f5;
+}
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Admin Register</h2>
+
+    <input type="text" id="username" placeholder="Admin Username" required>
+    <input type="password" id="password" placeholder="Password" required>
+
+    <button onclick="registerAdmin()">Register</button>
+
+    <div class="msg" id="message"></div>
+
+    <div class="switch">
+        Already an admin? <a href="admlog.html">Login here</a>
+    </div>
+</div>
+
+<script>
+    window.onload = () => {
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") {
+        document.body.classList.add("dark");
+    }
+};
+function registerAdmin() {
+    const admin = {
+        username: document.getElementById("username").value,
+        password: document.getElementById("password").value
+    };
+
+    fetch("http://localhost:8080/admin/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(admin)
+    })
+    .then(res => res.text())
+    .then(data => {
+        document.getElementById("message").innerText = data;
+    })
+    .catch(err => console.error(err));
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
